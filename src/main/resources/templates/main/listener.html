@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Listener Page</title>
+  <link rel="stylesheet" th:href="@{/css/nicepage.css}" media="screen">
+  <link rel="stylesheet" th:href="@{/css/Room_Content.css}" media="screen">
+  <link id="u-theme-google-font" rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:100,100i,300,300i,400,400i,500,500i,700,700i,900,900i|Open+Sans:300,300i,400,400i,500,500i,600,600i,700,700i,800,800i">
+
+  <meta name="theme-color" content="#478ac9">
+  <meta property="og:title" content="Room_Content">
+  <meta property="og:type" content="website">
+</head>
+<body class="u-body u-xl-mode"><header class="u-clearfix u-header u-header" id="sec-4b12"><div class="u-clearfix u-sheet u-sheet-1">
+  <a th:href="@{/room}" class="u-image u-logo u-image-1" data-image-width="1920" data-image-height="1920">
+    <img th:src="@{/images/Pngtreecrutches_5410990.png}" class="u-logo-image u-logo-image-1">
+  </a>
+  <a class="u-login u-login-1" th:text="${session.username}"></a>
+  <a class="u-login u-login-1" th:href="@{/logout}">Logout</a>
+</div></header>
+<section class="u-align-center u-clearfix u-section-1" id="sec-4469">
+
+  <div class="u-align-left u-clearfix u-sheet u-sheet-1">
+    <div id="audio-player">
+      <audio id="audio-screen" width="720px" height="480px" controls></audio>
+    </div>
+  </div>
+
+</section>
+<footer class="u-align-center u-clearfix u-footer u-grey-80 u-footer" id="sec-6226"><div class="u-clearfix u-sheet u-sheet-1">
+  <p class="u-small-text u-text u-text-variant u-text-1">dev by&nbsp;https://github.com/Bykwarb<br>
+    <br>
+  </p>
+</div></footer>
+<script th:src="@{/js/listener.js}"></script>
+</body>
+</html></title>
+</head>
+<body>
+
+</body>
+</html>
