@@ -31,6 +31,7 @@ public class Downloader {
         this.request = request;
         this.dlp = dlp;
     }
+    //Execute yt-dlp utility for download from youtube url
     public void downloadFromYoutubePlaylist(String token, String playlistUrl) throws Exception {
         createFolders(token);
         String directory = System.getProperty("user.home");
@@ -39,7 +40,7 @@ public class Downloader {
         request.setDownloadDirectory(token);
         dlp.executeFromYoutubePlaylist(request);
     }
-
+    //Execute yt-dlp utility for download from spotify songlist
     public void downloadFromTxt(String token) throws Exception {
         String txtPath = createFoldersAndTxt(token);
         String directory = System.getProperty("user.home");
@@ -49,7 +50,7 @@ public class Downloader {
         dlp.executeFromFile(request);
         Files.delete(Path.of(txtPath));
     }
-
+    //Execute yt-dlp utility for download from youtube url
     public void updateFromYoutube(String token, String playlistUrl) throws Exception {
         createUpdateFoldersYouTube(token);
         String directory = System.getProperty("user.home");
@@ -59,6 +60,7 @@ public class Downloader {
         dlp.executeFromYoutubePlaylist(request);
     }
 
+    //Execute yt-dlp utility for download from spotify songlist
     public void updateFromSpotify(String token) throws Exception{
         String directory = System.getProperty("user.home");
         String txtPath = createUpdateFoldersSpotify(token);
@@ -68,7 +70,7 @@ public class Downloader {
         dlp.executeFromFile(request);
         Files.delete(Path.of(txtPath));
     }
-
+    //Create an update directory in directory which corresponds to the room number,
     private void createUpdateFoldersYouTube(String token) throws IOException{
         updateTime = String.valueOf(System.currentTimeMillis());
         String dirPath = absolutePathToMusicStorage + token + "/update_" + updateTime;
@@ -76,7 +78,9 @@ public class Downloader {
         if (!dir.exists()){
             dir.mkdirs();
         }
-    }
+    }//Create an update directory in directory which corresponds to the room number,
+    // and create a txt file with youtube urls from youtubeApiParser. Return absolute path to txt file
+
     private String createUpdateFoldersSpotify(String token) throws IOException{
         updateTime = String.valueOf(System.currentTimeMillis());
         String dirPath = absolutePathToMusicStorage + token + "/update_" + updateTime;
@@ -90,6 +94,7 @@ public class Downloader {
         return url.getAbsolutePath();
     }
 
+    //Create a directory which corresponds to the room number, and create a txt file with youtube urls from youtubeApiParser. Return absolute path to txt file
     private String createFoldersAndTxt(String token) throws IOException {
         String dirPath = absolutePathToMusicStorage + token;
         File dir = new File(dirPath);
@@ -103,7 +108,7 @@ public class Downloader {
         Files.write(output, apiParser.getYoutubeUrls());
         return url.getAbsolutePath();
     }
-
+    //Create a directory which corresponds to the room number
     private void createFolders(String token){
         String dirPath = absolutePathToMusicStorage + token;
         File dir = new File(dirPath);
@@ -113,6 +118,7 @@ public class Downloader {
         }
     }
 
+    //Gets file names from the specified folder, sorts them by creation date and adds them to the list
     public List<String> extractFileNames(String pathToDirectory){
         File[] folder = new File(pathToDirectory).listFiles();
         List<String> fileList = new ArrayList<>();
@@ -129,7 +135,7 @@ public class Downloader {
         });
         return fileList;
     }
-
+    //Get files from the specified folder, sorts them by creation date and adds them to the list
     public List<File> extractFiles(String pathToDirectory){
         File[] folder = new File(pathToDirectory).listFiles();
         Arrays.sort(folder, new Comparator<File>() {
@@ -142,7 +148,7 @@ public class Downloader {
         });
         return Arrays.asList(folder);
     }
-
+    //Gets a file creation date
     private static long getFileCreationEpoch (File file) {
         try {
             BasicFileAttributes attr = Files.readAttributes(file.toPath(),

@@ -31,21 +31,23 @@ public class YtDlpRequest {
         this.url = url;
         this.directory = directory;
     }
-
+    //Build command with youtube url for yt-dlp
     protected String buildFromYoutubeUrl(){
         System.out.println(musicStorageDirectory);
         StringBuilder builder = new StringBuilder();
         System.out.println(downloadDirectory);
+        //Sets the video to be loaded in the format WEBM without video content, only audio
         String par = "-o " + musicStorageDirectory + downloadDirectory + "/%(title)s.webm -f bestaudio";
         builder.append(par).append(" ");
         builder.append(url).append(" ");
         return builder.toString().trim();
     }
-
+    //Build command with youtube url from file for yt-dlp
     protected String buildFromFile(){
         StringBuilder builder = new StringBuilder();
         System.out.println(downloadDirectory);
         String par = "-o " + musicStorageDirectory + downloadDirectory + "/%(title)s.webm ";
+        //Sets the video to be loaded in the format WEBM without video content, only audio
         String optionFormatted = String.format("-f bestaudio -a %s", filePath).trim();
         System.out.println(optionFormatted);
         builder.append(par).append(" ");

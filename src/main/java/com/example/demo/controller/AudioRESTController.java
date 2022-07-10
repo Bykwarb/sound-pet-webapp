@@ -26,9 +26,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
+//This is a rest controller for working with audio.
+// The client sends certain requests, receives the necessary data in the response,
+// or vice versa adds something to the server.
+
 @RestController
 @RequestMapping("/api/audio")
 public class AudioRESTController {
+
     private final AudioService audioService;
     private final YoutubeApiParser youtubeApiParser;
     private final SpotifyApiParser spotifyApiParser;
@@ -46,12 +51,13 @@ public class AudioRESTController {
         this.streamingDataService = streamingDataService;
     }
 
+    //Gets a stream of bytes from a file. The client receives it and sends it to the audio player.
     @GetMapping("/getResource/{name}")
     public ResponseEntity<Resource> getAudioByName(@PathVariable("name") String name) throws IOException {
         return ResponseEntity.ok(new ByteArrayResource(FileUtils.readFileToByteArray(new File(audioService.getAudio(name).getPath()))));
     }
 
-
+    //Remove track from room audio
    @PostMapping("/delete")
    public ResponseEntity<String> deleteTrack(@RequestParam(value = "track_name")String trackName, @RequestParam(value = "room_url")String roomUrl){
         logger.info(trackName + " " + roomUrl);
@@ -69,19 +75,25 @@ public class AudioRESTController {
        roomEntityService.updateRoom(room);
        return ResponseEntity.ok("deleted");
    }
+   //Get all audio from audioEntity DB
    @GetMapping("/all")
    public ResponseEntity<List<String>> getAllAudiosName(){
        return ResponseEntity.ok(audioService.getAllAudio());
    }
+    //Get all audio from room audio
    @GetMapping("/getRoomAudio/{room_url}")
     public ResponseEntity<List<String>> getAllAudioFromRoom(@PathVariable String room_url){
         return ResponseEntity.ok(roomEntityService.getAudioFromRoom(room_url));
    }
+
+   //Stupid simulation of peer to peer connection. Room has 2 type of user - streamer and listener.
+   // Every a few second listener get data from DB which contains streamer's audio player status
     @GetMapping("/getStreamingData/{url}")
     public ResponseEntity<StreamingDataEntity> getData(@PathVariable String url){
         return ResponseEntity.ok(streamingDataService.get(url));
     }
-
+    //Stupid simulation of peer to peer connection. Room has 2 type of user - streamer and listener.
+    // Every a few second streamer post data to DB which contains streamer's audio player status
     @PostMapping(value = "/postStreamingData", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<String> saveData(@RequestBody StreamingDataEntity streamingDataEntity){
         StringBuffer room = new StringBuffer(streamingDataEntity.getRoom());

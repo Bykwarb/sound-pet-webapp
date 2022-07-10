@@ -26,6 +26,10 @@ public class RegistrationListener implements ApplicationListener<OnRegistrationC
     public void onApplicationEvent(OnRegistrationCompleteEvent event) {
         this.confirmRegistration(event);
     }
+    //After registration triggers OnRegistrationCompleteEvent which generates a token and sends a message to the mail.
+    // The user has 2 status options - enabled and not enabled. If user not enabled - program won't let him in.
+    //To enable the user, you need to follow the link in the letter on the specified mail.
+    // If the link exists for more than 24 hours, then it becomes invalid.
     private void confirmRegistration(OnRegistrationCompleteEvent event){
         UserEntity user = event.getUser();
         String token = UUID.randomUUID().toString();

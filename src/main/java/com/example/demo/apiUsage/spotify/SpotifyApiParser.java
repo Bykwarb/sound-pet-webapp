@@ -41,6 +41,7 @@ public class SpotifyApiParser {
         return new SpotifyApiParser();
     }
 
+    //Parse Spotify Api to get the name of the songs in the playlist
     public void parse() throws IOException, InterruptedException {
         parseToken();
         createUrl();
@@ -58,6 +59,7 @@ public class SpotifyApiParser {
         }
     }
 
+    //Parse Spotify Api to get the name of the songs on the album
     public void parseAlbum() throws IOException, InterruptedException {
         parseToken();
         createAlbumUrl();
@@ -76,6 +78,7 @@ public class SpotifyApiParser {
 
     }
 
+    //Parse api verification token from spotify api
     private void parseToken() throws IOException, InterruptedException {
         HttpRequest request = HttpRequest.newBuilder(URI.create("https://accounts.spotify.com/api/token?grant_type=client_credentials")).
                 headers("Authorization", "Basic " + spotifyClientData,
@@ -87,6 +90,7 @@ public class SpotifyApiParser {
         token = it.access_token;
     }
 
+    //Rework playlist url to correct
     private void createUrl(){
         playlistUrl.delete(0,34);
         if(playlistUrl.indexOf("?") != -1){
@@ -95,6 +99,7 @@ public class SpotifyApiParser {
         url = "https://api.spotify.com/v1/playlists/" + playlistUrl + "/tracks?market=UA&fields=items(track(name%2Calbum(artists(name))))";
     }
 
+    //Rework album url to correct
     private void createAlbumUrl(){
         System.out.println(albumUrl);
         albumUrl.delete(0,31);

@@ -52,12 +52,14 @@ public class RoomController {
         this.downloader = downloader;
         this.service = service;
     }
+    //Show room create/login page on browser
     @Monitor
     @RequestMapping("/room")
     public String showRoom(){
         return "/main/Room_Create";
     }
 
+    //Post controller for creation new room
     @PostMapping("/room/create")
     public ModelAndView createRoom(HttpServletRequest request, @RequestParam("name") String name, @RequestParam("password") String password){
         logger.info("User in createRoom controller");
@@ -74,6 +76,7 @@ public class RoomController {
         return new ModelAndView("redirect:/room/download/" + entity.getUrl());
     }
 
+    //Post controller for login to room
    @PostMapping ("/room/login")
    public ModelAndView enterTheRoom(HttpServletRequest request, @RequestParam("room_url") String room_url, @RequestParam("password") String password){
        if (request.getSession().getAttribute("username") == null){
@@ -97,6 +100,7 @@ public class RoomController {
        return new ModelAndView("redirect:/room/content/" + room_url);
    }
 
+   //Show upload content to room page
     @GetMapping("/room/download/{url}")
     public String showUploadContent(@PathVariable("url") String url, HttpServletRequest request){
         logger.info("User in showUploadContent controller");
@@ -105,6 +109,9 @@ public class RoomController {
         }
         return "/main/Upload_Content";
     }
+    //Show room page with content on her.
+    // If user != creator of room -> return listener room page;
+    // If user == creator of room -> return streamer room page;
 
     @GetMapping("/room/content/{url}")
     public String showRoomContent(@PathVariable("url") String url, HttpServletRequest request){
@@ -119,6 +126,7 @@ public class RoomController {
         return "/main/streamer";
     }
 
+    //Post controller for download to server music from spotify form
     @PostMapping("/download")
     public String download(HttpServletRequest request, @RequestParam("url") String url) throws Exception {
         if (request.getSession().getAttribute("username") == null){
@@ -131,6 +139,7 @@ public class RoomController {
         if (url.contains("https://open.spotify.com/playlist/")){
             spotifyApiParser.setPlaylistUrl(new StringBuffer(url));
             try {
+                //Return JSON file with track name from spotify playlist, and convert him to collection (SongList)
                 spotifyApiParser.parse();
             }catch (HttpResponseException exception){
                 return "redirect:/room/download/" + room.getUrl();
@@ -138,27 +147,34 @@ public class RoomController {
         }else {
             spotifyApiParser.setAlbumUrl(new StringBuffer(url));
             try {
+                //Return JSON file with track name from spotify album, and convert him to collection (SongList)
                 spotifyApiParser.parseAlbum();
             }catch (HttpResponseException exception){
                 return "redirect:/room/download/" + room.getUrl();
             }
 
         }
+        //Add all tracks from songlist to collection
         spotifyApiParser.getSongList().forEach((x,y) ->{
             keychain.add(x);
         });
+        //If database has track with the same name, remove him from songlist
         for (String s : keychain) {
             if (albumList.contains(s)) {
                 spotifyApiParser.getSongList().remove(s);
             }
         }
+        //Get youtube url for every song in songlist
         youtubeApiParser.multiThreadParse();
         String token = request.getSession().getAttribute("room_url").toString();
+        //Download every track for which youtubeApiParser returned url
         downloader.downloadFromTxt(token);
+        //Gets the path in the file system to the loaded tracks
         List<String> filePathList = downloader.extractFileNames(absolutePathToMusicStorage + token);
         List<AudioEntity> audioEntities = new ArrayList<>();
         AtomicInteger integer = new AtomicInteger(0);
         spotifyApiParser.getSongList().forEach((x,y)->{
+            //If audio entities db dont have track with this name - added him name and file system path to db
             if (!albumList.contains(x)){
                 try {
                     audioService.saveAudio(x, filePathList.get(integer.get()));
@@ -168,6 +184,7 @@ public class RoomController {
             }
             integer.getAndIncrement();
         });
+        //Added tracks from spotify url which was sent on form to room audio
         for (int i = 0; i < keychain.size(); i++){
             audioEntities.add(audioService.getAudio(keychain.get(i)));
         }
@@ -175,6 +192,45 @@ public class RoomController {
         roomEntityService.updateRoom(room);
         return "redirect:/room/content/"+ room.getUrl();
     }
+    //Post controller for download to server music from youtube form
+    @PostMapping("/downloadFromYtPlaylist")
+    public String ytPlaylistDownload(HttpServletRequest request, @RequestParam("url") String url) throws Exception{
+        if (request.getSession().getAttribute("username") == null){
+            return "redirect:/login";
+        }
+        List<String> albumList = audioService.getAllAudio();
+        RoomEntity room = roomEntityService.loginToRoom(request.getSession().getAttribute("room_url").toString());
+        String token = request.getSession().getAttribute("room_url").toString();
+        //Download every track from url
+        downloader.downloadFromYoutubePlaylist(token, url);
+
+        //Gets the path in the file system to the loaded tracks
+        List<File> files = downloader.extractFiles(absolutePathToMusicStorage + token);
+
+        List<AudioEntity> audioEntities = new ArrayList<>();
+
+        AtomicInteger counter = new AtomicInteger();
+
+        files.forEach(e->{
+            String name = files.get(counter.get()).getName();
+            String path = files.get(counter.get()).getAbsolutePath();
+            //If audio entities db dont have track with this name - added him name and file system path to db
+            try {
+                if(!albumList.contains(name)){
+                    audioService.saveAudio(name, path);
+                }
+            } catch (IOException ex) {
+                throw new RuntimeException(ex);
+            }
+            //Added tracks from youtube url which was sent on form to room audio
+            audioEntities.add(audioService.getAudio(name));
+            counter.getAndIncrement();
+        });
+        room.setAudioEntity(audioEntities);
+        roomEntityService.updateRoom(room);
+        return "redirect:/room/content/"+ room.getUrl();
+    }
+    //Update room audio. Has an execution logic similar to /download. The only thing that is different is the method in the class Downloader
     @PostMapping("/room/add")
     public String addMusicToRoom(HttpServletRequest request,@RequestParam("resource_url") String url) throws Exception {
         if (request.getSession().getAttribute("username") == null){
@@ -265,32 +321,5 @@ public class RoomController {
         }
     }
 
-    @PostMapping("/downloadFromYtPlaylist")
-    public String ytPlaylistDownload(HttpServletRequest request, @RequestParam("url") String url) throws Exception{
-        if (request.getSession().getAttribute("username") == null){
-            return "redirect:/login";
-        }
-        RoomEntity room = roomEntityService.loginToRoom(request.getSession().getAttribute("room_url").toString());
-        String token = request.getSession().getAttribute("room_url").toString();
-        downloader.downloadFromYoutubePlaylist(token, url);
-        List<File> files = downloader.extractFiles(absolutePathToMusicStorage + token);
-        List<AudioEntity> audioEntities = new ArrayList<>();
-        AtomicInteger counter = new AtomicInteger();
-        files.forEach(e->{
-            String name = files.get(counter.get()).getName();
-            String path = files.get(counter.get()).getAbsolutePath();
-            try {
-                if(audioService.getAudio(name) == null){
-                    audioService.saveAudio(name, path);
-                }
-            } catch (IOException ex) {
-                throw new RuntimeException(ex);
-            }
-            audioEntities.add(audioService.getAudio(name));
-            counter.getAndIncrement();
-        });
-        room.setAudioEntity(audioEntities);
-        roomEntityService.updateRoom(room);
-        return "redirect:/room/content/"+ room.getUrl();
-    }
+
 }

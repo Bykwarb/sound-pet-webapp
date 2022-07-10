@@ -48,7 +48,12 @@ public class YoutubeApiParser {
         this.tokenService = tokenService;
     }
 
+    //Parse Google Youtube api to get the name of the songs from spotifyApiParser songlist
     public void multiThreadParse() throws InterruptedException {
+        //Every request to Google Api cost a certain amount of quota. Everyday limit - 10000 quota.
+        //Each request in this class cost 100 quotas.
+        //Therefore, a database was created with access tokens, each of which has 10,000 quotas.
+        // When a token runs out of quota, it becomes disabled. And after 24 hours the program resets this state again
         ytTokenEntities = tokenService.getTokens();
         System.out.println(ytTokenEntities.size());
         createKeywords();
@@ -62,7 +67,6 @@ public class YoutubeApiParser {
                     HttpResponse<YoutubeResponseJson> response = null;
                     while (response == null){
                         createUrl(urlNumber);
-                        System.out.println(token);
                         HttpRequest request = HttpRequest.newBuilder(URI.create(url))
                                 .headers(headers).build();
                         try {
@@ -71,6 +75,7 @@ public class YoutubeApiParser {
                             throw new RuntimeException(ex);
                         }
                         if (response.statusCode() !=200){
+                            //Set token disabled
                             synchronized (this){
                                 ytTokenEntities.get(0).setQuota(false);
                             }
@@ -126,6 +131,7 @@ public class YoutubeApiParser {
 
     }
 
+    //The query uses the title and author of the song as keywords.
     private void createKeywords(){
         keywords = new ArrayList<>();
         spotify.getSongList().forEach((x,y)-> {
@@ -133,6 +139,7 @@ public class YoutubeApiParser {
             keywords.add(song);
         });
     }
+    //Create query url with keyword in him
     private synchronized void createUrl(int keywordNumber){
         synchronized (this){
             ytTokenEntity = ytTokenEntities.get(0);

@@ -57,6 +57,12 @@ public class RegistrationController {
         try {
             UserEntity registered = userService.registerNewUserAccount(userEntity);
             String appUrl = request.getContextPath();
+
+            //After registration triggers RegistrationListener which generates a token and sends a message to the mail.
+            // The user has 2 status options - enabled and not enabled. If user not enabled - program won't let him in.
+            //To enable the user, you need to follow the link in the letter on the specified mail.
+            // If the link exists for more than 24 hours, then it becomes invalid.
+
             publisher.publishEvent(new OnRegistrationCompleteEvent(registered, request.getLocale(), appUrl));
         }catch (UserAlreadyExistsException e){
             ModelAndView mav = new ModelAndView("/sign/sign-up", "userTransfer", userEntity);

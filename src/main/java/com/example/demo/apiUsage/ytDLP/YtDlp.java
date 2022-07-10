@@ -7,6 +7,7 @@ import org.springframework.stereotype.Component;
 
 import java.io.*;
 import java.util.stream.Collectors;
+//That class execute cmd utility for download video from youtube
 @Component
 @PropertySource("classpath:directory.properties")
 public class YtDlp  {
@@ -23,12 +24,13 @@ public class YtDlp  {
     protected  String buildCommand(String command){
         return String.format("%s %s", EXECUTABLE_PATH, command);
     }
-
+    //Use yt-dlp utility for download youtube videos from youtube url
     public void executeFromYoutubePlaylist(YtDlpRequest request) throws Exception{
         String command = buildCommand( request.buildFromYoutubeUrl());
         execute(request, command);
     }
 
+    //Use yt-dlp utility for download youtube videos from youtube url in the txt file
     public  void executeFromFile(YtDlpRequest request) throws Exception {
         String command = buildCommand(request.buildFromFile());
         execute(request, command);
@@ -44,7 +46,6 @@ public class YtDlp  {
         }
         try {
             process = processBuilder.start();
-            System.out.println("im here");
         }catch (IOException e){
             e.printStackTrace();
         }
