@@ -55,7 +55,6 @@ public class YoutubeApiParser {
         //Therefore, a database was created with access tokens, each of which has 10,000 quotas.
         // When a token runs out of quota, it becomes disabled. And after 24 hours the program resets this state again
         ytTokenEntities = tokenService.getTokens();
-        System.out.println(ytTokenEntities.size());
         createKeywords();
         youtubeUrls = new ArrayList<>();
         for (int urlNumber = 0; urlNumber < keywords.size(); urlNumber++){
@@ -91,7 +90,6 @@ public class YoutubeApiParser {
                     }
                 }
             }
-
         });
         Thread uneven = new Thread(()->{
             for (int urlNumber = 0; urlNumber < keywords.size(); urlNumber++){
@@ -99,7 +97,6 @@ public class YoutubeApiParser {
                     HttpResponse<YoutubeResponseJson> response = null;
                     while (response == null){
                     createUrl(urlNumber);
-                    System.out.println(token);
                     HttpRequest request = HttpRequest.newBuilder(URI.create(url))
                             .headers(headers).build();
                         try {
@@ -145,7 +142,6 @@ public class YoutubeApiParser {
             ytTokenEntity = ytTokenEntities.get(0);
         }
         token = ytTokenEntity.getToken();
-        System.out.println(token);
         url = "https://youtube.googleapis.com/youtube/v3/search?maxResults=1&q="
                 + keywords.get(keywordNumber).replace(" ", "%25") + "&key=" + token;
     }

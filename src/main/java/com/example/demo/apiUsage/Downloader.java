@@ -163,4 +163,28 @@ public class Downloader {
     public String getUpdateTime() {
         return updateTime;
     }
+
+    public YoutubeApiParser getApiParser() {
+        return apiParser;
+    }
+
+    public YtDlpRequest getRequest() {
+        return request;
+    }
+
+    public YtDlp getDlp() {
+        return dlp;
+    }
+
+    public String getAbsolutePathToMusicStorage() {
+        return absolutePathToMusicStorage;
+    }
+
+    public void setAbsolutePathToMusicStorage(String absolutePathToMusicStorage) {
+        this.absolutePathToMusicStorage = absolutePathToMusicStorage;
+    }
+
+    public void setUpdateTime(String updateTime) {
+        this.updateTime = updateTime;
+    }
 }

@@ -36,4 +36,22 @@ public class AudioEntity {
     public void setPath(String path) {
         this.path = path;
     }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    @Override
+    public String toString() {
+        return "AudioEntity{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", artistName='" + artistName + '\'' +
+                ", path='" + path + '\'' +
+                '}';
+    }
 }

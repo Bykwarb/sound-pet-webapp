@@ -58,4 +58,6 @@ public class UserEntityServiceImpl implements UserEntityService{
     private boolean emailExist(String email){
         return userRepository.existsUserByEmail(email);
     }
+
+
 }

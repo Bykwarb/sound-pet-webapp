@@ -5,6 +5,7 @@ import com.example.demo.apiUsage.spotify.json.spotifyPlaylistJson.Items;
 import com.example.demo.apiUsage.spotify.json.spotifyPlaylistJson.SpotifyPlayListResponseJson;
 import com.example.demo.apiUsage.spotify.json.spotifyToken.TokenResponse;
 
+import com.example.demo.exceptions.NotCorrectUrlException;
 import org.apache.http.client.HttpResponseException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
@@ -18,6 +19,7 @@ import java.net.http.HttpResponse;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 @Component
 @PropertySource("classpath:spotify.properties")
@@ -34,6 +36,7 @@ public class SpotifyApiParser {
     private Map<String, List<String>> songList;
 
     private static final HttpClient client = HttpClient.newHttpClient();
+    //Private data which is needed for getting spotify token. Read more in official spotify.api documentation
     @Value("${client.data}")
     private String spotifyClientData;
 
@@ -42,7 +45,7 @@ public class SpotifyApiParser {
     }
 
     //Parse Spotify Api to get the name of the songs in the playlist
-    public void parse() throws IOException, InterruptedException {
+    public void parse() throws IOException, InterruptedException{
         parseToken();
         createUrl();
         HttpRequest request = HttpRequest.newBuilder(
@@ -83,15 +86,22 @@ public class SpotifyApiParser {
         HttpRequest request = HttpRequest.newBuilder(URI.create("https://accounts.spotify.com/api/token?grant_type=client_credentials")).
                 headers("Authorization", "Basic " + spotifyClientData,
                         "Content-Type", "application/x-www-form-urlencoded").POST(HttpRequest.BodyPublishers.noBody()).build();
-        System.out.println(request);
         HttpResponse<TokenResponse> response = client.send(request, new JsonBodyHandler<>(TokenResponse.class));
-        System.out.println(response.body());
+        if (response.statusCode() != 200){
+            throw new HttpResponseException(response.statusCode(), "Not valid spotify client data");
+        }
         TokenResponse it = response.body();
         token = it.access_token;
     }
 
     //Rework playlist url to correct
     private void createUrl(){
+        if (Objects.isNull(playlistUrl)){
+            throw new NullPointerException("PlaylistUrl is null");
+        }
+        else if (playlistUrl.length() < 31) {
+            throw new NotCorrectUrlException("Not valid playlistUrl");
+        }
         playlistUrl.delete(0,34);
         if(playlistUrl.indexOf("?") != -1){
             playlistUrl.delete(playlistUrl.indexOf("?"),playlistUrl.length());
@@ -101,13 +111,16 @@ public class SpotifyApiParser {
 
     //Rework album url to correct
     private void createAlbumUrl(){
-        System.out.println(albumUrl);
+        if (Objects.isNull(albumUrl)){
+            throw new NullPointerException("AlbumUrl is null");
+        }
+        else if (albumUrl.length() < 31) {
+            throw new NotCorrectUrlException("Not valid albumUrl");
+        }
         albumUrl.delete(0,31);
-        System.out.println(albumUrl);
         if (albumUrl.indexOf("?") != -1) {
             albumUrl.delete(albumUrl.indexOf("?"), albumUrl.length());
         }
-        System.out.println(albumUrl);
         url = "https://api.spotify.com/v1/albums/" + albumUrl + "/tracks?market=UA";
 
     }
@@ -146,5 +159,9 @@ public class SpotifyApiParser {
 
     public void setSpotifyClientData(String spotifyClientData) {
         this.spotifyClientData = spotifyClientData;
+    }
+
+    public void setSongList(Map<String, List<String>> songList) {
+        this.songList = songList;
     }
 }
