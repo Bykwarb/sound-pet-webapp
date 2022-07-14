@@ -44,10 +44,6 @@ class DownloaderTest {
             "https://www.youtube.com/watch?v=fWUxkZEuJG4",
             "https://www.youtube.com/watch?v=IiZ7tpjac-g");
 
-    @BeforeAll
-    static void setUp(){
-    }
-
     @Test
     void downloadFromYoutubePlaylist() throws Exception {
         int filesQuantity = 11;

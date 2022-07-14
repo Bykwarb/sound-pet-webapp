@@ -14,7 +14,7 @@ public class RoomEntity {
     @OneToOne
     @JoinColumn(name = "creator_id")
     private UserEntity creator;
-    @ManyToMany(targetEntity = AudioEntity.class, fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+    @ManyToMany(targetEntity = AudioEntity.class, cascade = CascadeType.REMOVE, fetch = FetchType.EAGER)
     private List<AudioEntity> audioEntity;
 
     public String getName() {

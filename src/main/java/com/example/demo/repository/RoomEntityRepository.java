@@ -9,4 +9,5 @@ import org.springframework.stereotype.Repository;
 public interface RoomEntityRepository extends CrudRepository<RoomEntity, Long> {
     RoomEntity getByCreator(UserEntity user);
     RoomEntity findByUrl(String url);
+    RoomEntity findByName(String name);
 }
