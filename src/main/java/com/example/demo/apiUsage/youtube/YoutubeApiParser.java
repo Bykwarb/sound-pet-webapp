@@ -6,11 +6,7 @@ import com.example.demo.apiUsage.youtube.json.Items;
 import com.example.demo.apiUsage.youtube.json.YoutubeResponseJson;
 import com.example.demo.entity.YtTokenEntity;
 import com.example.demo.service.YtTokenService;
-import com.example.demo.service.YtTokenServiceImpl;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.net.URI;

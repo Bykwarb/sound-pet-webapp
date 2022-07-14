@@ -7,7 +7,6 @@ import com.example.demo.apiUsage.ytDLP.YtDlpRequest;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.junit.Assert;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
@@ -18,7 +17,6 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.List;
 
 @RunWith(SpringRunner.class)

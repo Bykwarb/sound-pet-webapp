@@ -2,7 +2,6 @@ package com.example.demo.service;
 
 import com.example.demo.entity.YtTokenEntity;
 import com.example.demo.repository.YtTokenRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 

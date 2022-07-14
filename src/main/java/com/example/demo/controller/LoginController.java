@@ -1,9 +1,7 @@
 package com.example.demo.controller;
 
 import com.example.demo.entity.UserEntity;
-import com.example.demo.exceptions.UserNotFoundException;
 import com.example.demo.service.UserEntityService;
-import org.apache.catalina.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.crypto.password.PasswordEncoder;

@@ -6,11 +6,10 @@ import com.example.demo.apiUsage.youtube.YoutubeApiParser;
 import com.example.demo.entity.AudioEntity;
 import com.example.demo.entity.RoomEntity;
 import com.example.demo.entity.StreamingDataEntity;
-import com.example.demo.entity.YtTokenEntity;
+
 import com.example.demo.service.AudioService;
 import com.example.demo.service.RoomEntityService;
 import com.example.demo.service.StreamingDataService;
-import com.example.demo.service.YtTokenService;
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,11 +19,8 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.print.attribute.standard.Media;
 import java.io.*;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
 
 //This is a rest controller for working with audio.
 // The client sends certain requests, receives the necessary data in the response,
