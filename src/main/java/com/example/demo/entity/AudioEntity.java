@@ -1,6 +1,7 @@
 package com.example.demo.entity;
 
 import javax.persistence.*;
+import java.util.Objects;
 
 @Entity
 public class AudioEntity {
@@ -52,5 +53,18 @@ public class AudioEntity {
                 ", artistName='" + artistName + '\'' +
                 ", path='" + path + '\'' +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        AudioEntity entity = (AudioEntity) o;
+        return Objects.equals(id, entity.id) && Objects.equals(name, entity.name) && Objects.equals(artistName, entity.artistName) && Objects.equals(path, entity.path);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, name, artistName, path);
     }
 }

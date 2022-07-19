@@ -2,6 +2,7 @@ package com.example.demo.entity;
 
 import javax.persistence.*;
 import java.util.List;
+import java.util.Objects;
 
 @Entity
 public class RoomEntity {
@@ -65,5 +66,28 @@ public class RoomEntity {
         this.audioEntity = audioEntity;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        RoomEntity room = (RoomEntity) o;
+        return Objects.equals(id, room.id) && Objects.equals(name, room.name) && Objects.equals(url, room.url) && Objects.equals(password, room.password) && Objects.equals(creator, room.creator) && Objects.equals(audioEntity, room.audioEntity);
+    }
 
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, name, url, password, creator, audioEntity);
+    }
+
+    @Override
+    public String toString() {
+        return "RoomEntity{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", url='" + url + '\'' +
+                ", password='" + password + '\'' +
+                ", creator=" + creator +
+                ", audioEntity=" + audioEntity +
+                '}';
+    }
 }
